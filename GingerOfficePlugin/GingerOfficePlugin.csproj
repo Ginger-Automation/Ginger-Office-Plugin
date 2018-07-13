@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.8.1" />
+    <PackageReference Include="Ginger.Plugin.Core" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
