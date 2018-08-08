@@ -34,7 +34,7 @@ namespace StandAloneActions
         public override string Name { get { return "ExcelService"; } }
 
         #region Actions
-
+      
         /// <summary>
         /// Get first row where column Name equal value
         /// </summary>
@@ -44,28 +44,21 @@ namespace StandAloneActions
         /// <param name="column"></param>
         [GingerAction("ReadExcelCell", "Read From Excel")]
         public void ReadExcelCell(ref GingerAction GA, string FileName, string sheetName, string row, string column)
-        {
-            try
+        {                          
+            if (column.Contains("#") && row.Contains("#"))              //row="#3", column="#B"
             {
-                if (column.Contains("#") && row.Contains("#"))              //row="#3", column="#B"
-                {
-                    string col = GetColumnName(FileName, sheetName, column);
-                    string nRow = Convert.ToString(GetRowIndex(row));
-                    string txt1 = GetCellValue(FileName, "Sheet1", col + nRow);
+                string col = GetColumnName(FileName, sheetName, column);
+                string nRow = Convert.ToString(GetRowIndex(row));
+                string txt1 = GetCellValue(FileName, "Sheet1", col + nRow);
 
-                    GA.Output.Add("Value", txt1);
-                    GA.ExInfo = "Read FileName: " + FileName + " row= " + row + " col= " + column;
-                }
-                else                                                        //row="First='Moshe'", column="ID"
-                {
-                    List<string> colList = GetCoulmnsName(FileName, sheetName, column);
-                    ReadExcelRowWithCondition(GA, FileName, sheetName, row, colList);
-                }
+                GA.Output.Add("Value", txt1);
+                GA.ExInfo = "Read FileName: " + FileName + " row= " + row + " col= " + column;
             }
-            catch (Exception ex)
+            else                                                        //row="First='Moshe'", column="ID"
             {
-                GA.AddError("ReadExcelCell", ex.StackTrace);
-            }
+                List<string> colList = GetCoulmnsName(FileName, sheetName, column);
+                ReadExcelRowWithCondition(GA, FileName, sheetName, row, colList);
+            }         
         }
 
         /// <summary>
@@ -77,30 +70,23 @@ namespace StandAloneActions
         /// <param name="columns"></param>
         [GingerAction("ReadExcelRow", "Read Next Row From Excel")]
         public void ReadExcelRow(ref GingerAction GA, string FileName, string sheetName, string row, string columns)
-        {
-            try
+        {            
+            if (!string.IsNullOrEmpty(row) && row.Contains("#"))        //row = "#3"
             {
-                if (!string.IsNullOrEmpty(row) && row.Contains("#"))        //row = "#3"
+                List<string> colList = GetCoulmnsName(FileName, sheetName, columns);
+                int rowNum = GetRowIndex(row);
+                List<string> rowValues = GetCurrentRowValues(FileName, "Sheet1", rowNum, colList);
+                foreach (var item in rowValues)
                 {
-                    List<string> colList = GetCoulmnsName(FileName, sheetName, columns);
-                    int rowNum = GetRowIndex(row);
-                    List<string> rowValues = GetCurrentRowValues(FileName, "Sheet1", rowNum, colList);
-                    foreach (var item in rowValues)
-                    {
-                        GA.Output.Add("Value", item.Trim()); 
-                    }
-                    GA.ExInfo = "Read FileName: " + FileName + " row= " + row;
+                    GA.Output.Add("Value", item.Trim()); 
                 }
-                else                                                        //row = "Used='No'"
-                {                                                           //row = "ID>'30' and Used='No'"
-                    List<string> colList = GetCoulmnsName(FileName, sheetName, columns);
-                    ReadExcelRowWithCondition(GA, FileName, sheetName, row, colList);
-                }
+                GA.ExInfo = "Read FileName: " + FileName + " row= " + row;
             }
-            catch (Exception ex)
-            {
-                GA.AddError("ReadExcelRow", ex.StackTrace);
-            }
+            else                                                        //row = "Used='No'"
+            {                                                           //row = "ID>'30' and Used='No'"
+                List<string> colList = GetCoulmnsName(FileName, sheetName, columns);
+                ReadExcelRowWithCondition(GA, FileName, sheetName, row, colList);
+            }         
         }
 
         /// <summary>
@@ -113,34 +99,27 @@ namespace StandAloneActions
         /// <param name="values"></param>
         [GingerAction("ReadExcelAndUpdate", "Read and Update Excel Cell")]
         public void ReadExcelAndUpdate(ref GingerAction GA, string FileName, string sheetName, string row, string columns, string values)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(row) && !string.IsNullOrEmpty(values))
-                {                    
-                    int rowNum = GetRowIndex(row);
-                    bool isUpdated = UpdateRowCells(FileName, sheetName, rowNum, values);
-                    if (!isUpdated)
+        {            
+            if (!string.IsNullOrEmpty(row) && !string.IsNullOrEmpty(values))
+            {                    
+                int rowNum = GetRowIndex(row);
+                bool isUpdated = UpdateRowCells(FileName, sheetName, rowNum, values);
+                if (!isUpdated)
+                {
+                    GA.AddError("ReadExcelAndUpdate", "Update Fail!");
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(columns))
                     {
-                        GA.AddError("ReadExcelAndUpdate", "Update Fail!");
+                        GA.Output.Add("Value", Convert.ToString(isUpdated));
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(columns))
-                        {
-                            GA.Output.Add("Value", Convert.ToString(isUpdated));
-                        }
-                        else
-                        {
-                            ReadExcelRow(ref GA, FileName, sheetName, row, columns);
-                        }
+                        ReadExcelRow(ref GA, FileName, sheetName, row, columns);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                GA.AddError("ReadExcelAndUpdate", ex.StackTrace);
-            }
+            }         
         }
 
         /// <summary>
@@ -151,22 +130,15 @@ namespace StandAloneActions
         /// <param name="rowValueList"></param>
         [GingerAction("AppendData", "Append Data to Excel")]
         public void AppendData(ref GingerAction GA, string FileName, string sheetName, string values)
-        {
-            try
-            {
-                // Appends new row in sheet
-                List<ExcelCellValues> rowValueList = GetColumnUpdateValues(FileName, sheetName, values);
-                var newRow = AppendRowExcel(FileName, sheetName, rowValueList);
-                uint rowCount = newRow.RowIndex;
+        {            
+            // Appends new row in sheet
+            List<ExcelCellValues> rowValueList = GetColumnUpdateValues(FileName, sheetName, values);
+            var newRow = AppendRowExcel(FileName, sheetName, rowValueList);
+            uint rowCount = newRow.RowIndex;
 
-                GA.Output.Add("Value", Convert.ToString(rowCount));
+            GA.Output.Add("Value", Convert.ToString(rowCount));
 
-                GA.ExInfo = "Read FileName: " + FileName;
-            }
-            catch (Exception ex)
-            {
-                GA.AddError("AppendData", ex.StackTrace);
-            }
+            GA.ExInfo = "Read FileName: " + FileName;         
         }
         
         /// <summary>
@@ -207,20 +179,13 @@ namespace StandAloneActions
         /// <param name="columns"></param>
         private List<string> ReadExcelRowWithCondition(GingerAction GA, string FileName, string sheetName, string row, List<string> columnsList)
         {
-            List<string> values = new List<string>();
-            try
-            {
+            List<string> values = new List<string>();            
                 values = GetExcelRowWithCondition(FileName, sheetName, row, columnsList);
                 foreach (var item in values)
                 {
                     GA.Output.Add("Value", Convert.ToString(item.Trim())); 
                 }
-                GA.ExInfo = "Read FileName: " + FileName + " row= " + row;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+                GA.ExInfo = "Read FileName: " + FileName + " row= " + row;            
             return values;
         }
 
@@ -771,30 +736,24 @@ namespace StandAloneActions
         private string GetColumnName(string fileName, string sheetName, string col)
         {
             string clName = string.Empty;
-            try
+            
+            if (col.Trim().StartsWith("#"))
             {
-                if (col.Trim().StartsWith("#"))
+                string cl = col.Trim().Replace("#", "");
+                int cIndex = 0;
+                if (int.TryParse(cl, out cIndex))
                 {
-                    string cl = col.Trim().Replace("#", "");
-                    int cIndex = 0;
-                    if (int.TryParse(cl, out cIndex))
-                    {
-                        clName = GetColumnNameFromColumnNumber(cIndex);
-                    }
-                    else if (cl.Length == 1)
-                    {
-                        clName = cl;
-                    }
+                    clName = GetColumnNameFromColumnNumber(cIndex);
                 }
-                else
+                else if (cl.Length == 1)
                 {
-                    clName = GetColumnNameByHeading(fileName, sheetName, col.Trim());
+                    clName = cl;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                throw;
-            }
+                clName = GetColumnNameByHeading(fileName, sheetName, col.Trim());
+            }            
             return clName;
         }
 
