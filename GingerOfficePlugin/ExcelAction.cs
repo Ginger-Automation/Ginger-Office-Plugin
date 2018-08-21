@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using GingerPlugInsNET.ActionsLib;
-using GingerPlugInsNET.PlugInsLib;
-using GingerPlugInsNET.ServicesLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,10 +27,10 @@ using System.Linq;
 
 namespace StandAloneActions
 {
-    public class ExcelAction : PluginServiceBase, IStandAloneAction
+    [GingerService("Excel", "Read/Write data to/from Excel")]
+    public class ExcelAction : IGingerService
     {
-        public override string Name { get { return "ExcelService"; } }
-
+        
         #region Actions
       
         /// <summary>
@@ -43,7 +41,7 @@ namespace StandAloneActions
         /// <param name="row"></param>
         /// <param name="column"></param>
         [GingerAction("ReadExcelCell", "Read From Excel")]
-        public void ReadExcelCell(ref GingerAction GA, string FileName, string sheetName, string row, string column)
+        public void ReadExcelCell(GingerAction GA, string FileName, string sheetName, string row, string column)
         {                          
             if (column.Contains("#") && row.Contains("#"))              //row="#3", column="#B"
             {
@@ -51,8 +49,8 @@ namespace StandAloneActions
                 string nRow = Convert.ToString(GetRowIndex(row));
                 string txt1 = GetCellValue(FileName, "Sheet1", col + nRow);
 
-                GA.Output.Add("Value", txt1);
-                GA.ExInfo = "Read FileName: " + FileName + " row= " + row + " col= " + column;
+                GA.AddOutput("Value", txt1);
+                GA.AddExInfo("Read FileName: " + FileName + " row= " + row + " col= " + column);
             }
             else                                                        //row="First='Moshe'", column="ID"
             {
@@ -69,7 +67,7 @@ namespace StandAloneActions
         /// <param name="row"></param>
         /// <param name="columns"></param>
         [GingerAction("ReadExcelRow", "Read Next Row From Excel")]
-        public void ReadExcelRow(ref GingerAction GA, string FileName, string sheetName, string row, string columns)
+        public void ReadExcelRow(GingerAction GA, string FileName, string sheetName, string row, string columns)
         {            
             if (!string.IsNullOrEmpty(row) && row.Contains("#"))        //row = "#3"
             {
@@ -78,9 +76,9 @@ namespace StandAloneActions
                 List<string> rowValues = GetCurrentRowValues(FileName, "Sheet1", rowNum, colList);
                 foreach (var item in rowValues)
                 {
-                    GA.Output.Add("Value", item.Trim()); 
+                    GA.AddOutput("Value", item.Trim()); 
                 }
-                GA.ExInfo = "Read FileName: " + FileName + " row= " + row;
+                GA.AddExInfo("Read FileName: " + FileName + " row= " + row);
             }
             else                                                        //row = "Used='No'"
             {                                                           //row = "ID>'30' and Used='No'"
@@ -98,7 +96,7 @@ namespace StandAloneActions
         /// <param name="columns"></param>
         /// <param name="values"></param>
         [GingerAction("ReadExcelAndUpdate", "Read and Update Excel Cell")]
-        public void ReadExcelAndUpdate(ref GingerAction GA, string FileName, string sheetName, string row, string columns, string values)
+        public void ReadExcelAndUpdate(GingerAction GA, string FileName, string sheetName, string row, string columns, string values)
         {            
             if (!string.IsNullOrEmpty(row) && !string.IsNullOrEmpty(values))
             {                    
@@ -106,17 +104,17 @@ namespace StandAloneActions
                 bool isUpdated = UpdateRowCells(FileName, sheetName, rowNum, values);
                 if (!isUpdated)
                 {
-                    GA.AddError("ReadExcelAndUpdate", "Update Fail!");
+                    GA.AddError("ReadExcelAndUpdate - Update Fail!");
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(columns))
                     {
-                        GA.Output.Add("Value", Convert.ToString(isUpdated));
+                        GA.AddOutput("Value", Convert.ToString(isUpdated));
                     }
                     else
                     {
-                        ReadExcelRow(ref GA, FileName, sheetName, row, columns);
+                        ReadExcelRow(GA, FileName, sheetName, row, columns);
                     }
                 }
             }         
@@ -129,16 +127,16 @@ namespace StandAloneActions
         /// <param name="FileName"></param>
         /// <param name="rowValueList"></param>
         [GingerAction("AppendData", "Append Data to Excel")]
-        public void AppendData(ref GingerAction GA, string FileName, string sheetName, string values)
+        public void AppendData(GingerAction GA, string FileName, string sheetName, string values)
         {            
             // Appends new row in sheet
             List<ExcelCellValues> rowValueList = GetColumnUpdateValues(FileName, sheetName, values);
             var newRow = AppendRowExcel(FileName, sheetName, rowValueList);
             uint rowCount = newRow.RowIndex;
 
-            GA.Output.Add("Value", Convert.ToString(rowCount));
+            GA.AddOutput("Value", Convert.ToString(rowCount));
 
-            GA.ExInfo = "Read FileName: " + FileName;         
+            GA.AddExInfo("Read FileName: " + FileName);         
         }
         
         /// <summary>
@@ -150,20 +148,20 @@ namespace StandAloneActions
         /// <param name="column"></param>
         /// <param name="value"></param>
         [GingerAction("WriteExcel", "Write to Excel")]
-        public void WriteExcel(ref GingerAction GA, string FileName, string sheetName, int row, string column, string value)
+        public void WriteExcel(GingerAction GA, string FileName, string sheetName, int row, string column, string value)
         {
             //// Create new sheet and insert the value in A1
             //// just as smaple for writing
             bool isInserted = InsertText(FileName, sheetName, (uint)row, column, value);
             if(isInserted)
             {
-                GA.Output.Add("Value", Convert.ToString(true));
+                GA.AddOutput("Value", Convert.ToString(true));
             }
             else
             {
-                GA.AddError("WriteExcel", "Failed to Update");
+                GA.AddError("WriteExcel - Failed to Update");
             }
-            GA.ExInfo = "Read FileName: " + FileName + " row= " + row + " col= " + column;
+            GA.AddExInfo("Read FileName: " + FileName + " row= " + row + " col= " + column);
         }
         
         #endregion
@@ -183,9 +181,9 @@ namespace StandAloneActions
                 values = GetExcelRowWithCondition(FileName, sheetName, row, columnsList);
                 foreach (var item in values)
                 {
-                    GA.Output.Add("Value", Convert.ToString(item.Trim())); 
+                    GA.AddOutput("Value", Convert.ToString(item.Trim())); 
                 }
-                GA.ExInfo = "Read FileName: " + FileName + " row= " + row;            
+                GA.AddExInfo("Read FileName: " + FileName + " row= " + row);            
             return values;
         }
 
