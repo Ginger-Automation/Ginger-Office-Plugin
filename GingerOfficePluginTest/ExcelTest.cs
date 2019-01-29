@@ -33,7 +33,7 @@ namespace StandAloneActionsTest
         public void ReadExcelCellRow3ColumnB()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -47,7 +47,7 @@ namespace StandAloneActionsTest
         public void ReadExcelCellRow3ColumnColumnCount()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -61,7 +61,7 @@ namespace StandAloneActionsTest
         public void ReadExcelCellWhereFirstEquelMosheGetID()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -75,7 +75,7 @@ namespace StandAloneActionsTest
         public void ReadExcelRow2()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -93,7 +93,7 @@ namespace StandAloneActionsTest
         public void ReadExcelRow3GetColumns_1_2_4()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -109,7 +109,7 @@ namespace StandAloneActionsTest
         public void ReadExcelRow3GetColumnsCount()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -122,7 +122,7 @@ namespace StandAloneActionsTest
         public void ReadExcelCellWhereUsedIsNoAndGetID()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -136,7 +136,7 @@ namespace StandAloneActionsTest
         public void ReadExcelRowWithConditionIDMoreThan30AndUsedIsNo()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -153,7 +153,7 @@ namespace StandAloneActionsTest
         public void ReadUpdatePassExcelCellWithRowNoGetColumnName()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -169,7 +169,7 @@ namespace StandAloneActionsTest
         public void ReadUpdateFailExcelCellWithRowNo()
         {
             ///Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act
@@ -183,7 +183,7 @@ namespace StandAloneActionsTest
         public void AppendNewRowSimple()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
             
             x.AppendData(GA, EXCEL_FILE_NAME, "Sheet1", "'55', 'John', 'Smith'");
@@ -197,7 +197,7 @@ namespace StandAloneActionsTest
         public void AppendNewRowByColumnHeading()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             x.AppendData(GA, EXCEL_FILE_NAME, "Sheet1", "Last='aaa', Used='No'");
@@ -211,7 +211,7 @@ namespace StandAloneActionsTest
         public void AppendNewRowByColumnName()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             x.AppendData(GA, EXCEL_FILE_NAME, "Sheet1", "#B='ColName', #E='Yes'");
@@ -225,7 +225,7 @@ namespace StandAloneActionsTest
         public void WriteExcelPass()
         {
             //Arrange
-            ExcelAction x = new ExcelAction();
+            ExcelService x = new ExcelService();
             GingerAction GA = new GingerAction();
 
             //Act

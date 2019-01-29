@@ -1,0 +1,128 @@
+[
+  {
+    "ServiceId": "ExcelService",
+    "Description": null,
+    "IsSession": false,
+    "Actions": [
+      {
+        "ActionId": "ReadExcelCell",
+        "Description": "Read From Excel",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "FileName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "sheetName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "row",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "column",
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "ReadExcelRow",
+        "Description": "Read Next Row From Excel",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "FileName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "sheetName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "row",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "columns",
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "ReadExcelAndUpdate",
+        "Description": "Read and Update Excel Cell",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "FileName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "sheetName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "row",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "columns",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "values",
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "AppendData",
+        "Description": "Append Data to Excel",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "FileName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "sheetName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "values",
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "WriteExcel",
+        "Description": "Write to Excel",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "FileName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "sheetName",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "row",
+            "ParamTypeName": "int"
+          },
+          {
+            "Param": "column",
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "value",
+            "ParamTypeName": "string"
+          }
+        ]
+      }
+    ]
+  }
+]

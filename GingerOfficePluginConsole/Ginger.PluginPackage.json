@@ -1,0 +1,8 @@
+{
+  "Id": "GingerOfficePlugin",
+  "Version": "1.0.0",
+  "ProjectUrl": "git\\Pluginex1...",
+  "Description": "Example1",
+  "Summary": "Read from Excel and other office documents",
+  "StartupDll": "GingerOfficePluginConsole.dll"
+}

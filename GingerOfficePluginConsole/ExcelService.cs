@@ -27,8 +27,8 @@ using System.Linq;
 
 namespace StandAloneActions
 {
-    [GingerService("Excel", "Read/Write data to/from Excel")]
-    public class ExcelAction : IGingerService
+    [GingerService("ExcelService", "Read/Write data to/from Excel")]
+    public class ExcelService 
     {
         
         #region Actions
@@ -41,7 +41,7 @@ namespace StandAloneActions
         /// <param name="row"></param>
         /// <param name="column"></param>
         [GingerAction("ReadExcelCell", "Read From Excel")]
-        public void ReadExcelCell(GingerAction GA, string FileName, string sheetName, string row, string column)
+        public void ReadExcelCell(IGingerAction GA, string FileName, string sheetName, string row, string column)
         {                          
             if (column.Contains("#") && row.Contains("#"))              //row="#3", column="#B"
             {
@@ -67,7 +67,7 @@ namespace StandAloneActions
         /// <param name="row"></param>
         /// <param name="columns"></param>
         [GingerAction("ReadExcelRow", "Read Next Row From Excel")]
-        public void ReadExcelRow(GingerAction GA, string FileName, string sheetName, string row, string columns)
+        public void ReadExcelRow(IGingerAction GA, string FileName, string sheetName, string row, string columns)
         {            
             if (!string.IsNullOrEmpty(row) && row.Contains("#"))        //row = "#3"
             {
@@ -96,7 +96,7 @@ namespace StandAloneActions
         /// <param name="columns"></param>
         /// <param name="values"></param>
         [GingerAction("ReadExcelAndUpdate", "Read and Update Excel Cell")]
-        public void ReadExcelAndUpdate(GingerAction GA, string FileName, string sheetName, string row, string columns, string values)
+        public void ReadExcelAndUpdate(IGingerAction GA, string FileName, string sheetName, string row, string columns, string values)
         {            
             if (!string.IsNullOrEmpty(row) && !string.IsNullOrEmpty(values))
             {                    
@@ -127,7 +127,7 @@ namespace StandAloneActions
         /// <param name="FileName"></param>
         /// <param name="rowValueList"></param>
         [GingerAction("AppendData", "Append Data to Excel")]
-        public void AppendData(GingerAction GA, string FileName, string sheetName, string values)
+        public void AppendData(IGingerAction GA, string FileName, string sheetName, string values)
         {            
             // Appends new row in sheet
             List<ExcelCellValues> rowValueList = GetColumnUpdateValues(FileName, sheetName, values);
@@ -148,7 +148,7 @@ namespace StandAloneActions
         /// <param name="column"></param>
         /// <param name="value"></param>
         [GingerAction("WriteExcel", "Write to Excel")]
-        public void WriteExcel(GingerAction GA, string FileName, string sheetName, int row, string column, string value)
+        public void WriteExcel(IGingerAction GA, string FileName, string sheetName, int row, string column, string value)
         {
             //// Create new sheet and insert the value in A1
             //// just as smaple for writing
@@ -175,7 +175,7 @@ namespace StandAloneActions
         /// <param name="FileName"></param>
         /// <param name="row"></param>
         /// <param name="columns"></param>
-        private List<string> ReadExcelRowWithCondition(GingerAction GA, string FileName, string sheetName, string row, List<string> columnsList)
+        private List<string> ReadExcelRowWithCondition(IGingerAction GA, string FileName, string sheetName, string row, List<string> columnsList)
         {
             List<string> values = new List<string>();            
                 values = GetExcelRowWithCondition(FileName, sheetName, row, columnsList);
